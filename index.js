@@ -10,15 +10,22 @@ import {
 const pkg = require('./package.json')
 const { combine, timestamp, json, errors } = format
 
-module.exports = function WinstonLog(moduleOptions = {}) {
+module.exports = function WinstonLog(moduleOptions = {
+  useFileLogging = true,
+  performHeaderChecks = true
+}) {
   const winstonOptions = {
-    logPath: './logs',
-    logName: `${process.env.NODE_ENV}.log`,
+    ...(useFileLogging ? {
+      logPath: './logs',
+      logName: `${process.env.NODE_ENV}.log`,
+    } : {}),
     ...this.options.winstonLog,
     ...moduleOptions,
   }
 
-  mkdirIfNotExists(resolve(process.cwd(), winstonOptions.logPath))
+  if (!moduleOptions.doNoUseFile) {
+    mkdirIfNotExists(resolve(process.cwd(), winstonOptions.logPath))
+  }
 
   const logger = createLogger({
     exitOnError: false,
@@ -51,7 +58,7 @@ module.exports = function WinstonLog(moduleOptions = {}) {
         checkHeadersContentType(reqInfo.headers, ['application/json'])
       const isInternalNuxtRequest = reqInfo.url && reqInfo.url.includes('/_nuxt/')
 
-      if (isHtmlOrJson && !isInternalNuxtRequest) {
+      if (!performHeaderChecks || (isHtmlOrJson && !isInternalNuxtRequest)) {
         logger.info(`Accessed ${req.url}`, {
           ...reqInfo,
         })

@@ -58,6 +58,9 @@ $ yarn add nuxt-winston-log # or npm i nuxt-winston-log
 }
 ```
 
+If you pass `useFileLogging: false` in the config options, it will ignore all of
+the file creation and not force winston to create the log folder.
+
 2. To customize the [File Transport instance](https://github.com/winstonjs/winston/blob/master/docs/transports.md#file-transport), pass options to the `transportOptions` key:
 
 ```js
@@ -107,5 +110,7 @@ export const actions = {
 }
 // ...
 ```
+
+5. By default the plugin checks headers for requests that pass a `text/html` or json header and only logs those requests.  Set `ignoreHeaderChecks` in nuxt.config.js to log all requests and ignore checking for the headers.
 
 # [Changelog](./CHANGELOG.md)
