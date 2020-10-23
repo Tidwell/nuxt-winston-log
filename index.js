@@ -11,11 +11,11 @@ const pkg = require('./package.json')
 const { combine, timestamp, json, errors } = format
 
 module.exports = function WinstonLog(moduleOptions = {
-  useFileLogging = true,
-  performHeaderChecks = true
+  useFileLogging: true,
+  performHeaderChecks: true
 }) {
   const winstonOptions = {
-    ...(useFileLogging ? {
+    ...(moduleOptions.useFileLogging ? {
       logPath: './logs',
       logName: `${process.env.NODE_ENV}.log`,
     } : {}),
@@ -23,7 +23,7 @@ module.exports = function WinstonLog(moduleOptions = {
     ...moduleOptions,
   }
 
-  if (!moduleOptions.doNoUseFile) {
+  if (moduleOptions.useFileLogging) {
     mkdirIfNotExists(resolve(process.cwd(), winstonOptions.logPath))
   }
 
@@ -58,7 +58,7 @@ module.exports = function WinstonLog(moduleOptions = {
         checkHeadersContentType(reqInfo.headers, ['application/json'])
       const isInternalNuxtRequest = reqInfo.url && reqInfo.url.includes('/_nuxt/')
 
-      if (!performHeaderChecks || (isHtmlOrJson && !isInternalNuxtRequest)) {
+      if (!moduleOptions.performHeaderChecks || (isHtmlOrJson && !isInternalNuxtRequest)) {
         logger.info(`Accessed ${req.url}`, {
           ...reqInfo,
         })
