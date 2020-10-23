@@ -30,7 +30,7 @@ module.exports = function WinstonLog(moduleOptions = {
   const logger = createLogger({
     exitOnError: false,
     format: combine(timestamp(), errors({ stack: true }), json()),
-    (moduleOptions.useFileLogging ? {
+    ...(moduleOptions.useFileLogging ? {
       transports: [
         new transports.File({
           filename: resolve(winstonOptions.logPath, winstonOptions.logName),
